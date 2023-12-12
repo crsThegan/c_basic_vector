@@ -5,6 +5,8 @@
 #define CAPACITY_FACTOR 2
 
 #define vector_create(type) _vector_create(sizeof(type))
+#define foreach(it, vec) vecitr_t it = vector_begin(vec); \
+                                for(; !vector_end(vec, &it); vecitr_next(&it)) 
 
 struct Vector {
     void *data;
@@ -12,6 +14,11 @@ struct Vector {
     size_t capacity;
     size_t el_size;
 };
+
+typedef struct {
+    void *current;
+    size_t el_size;
+} vecitr_t;
 
 struct Vector *_vector_create(size_t el_size) {
     struct Vector *ret = malloc(sizeof(struct Vector));
@@ -28,7 +35,7 @@ void vector_destroy(struct Vector *self) {
     free(self);
 }
 
-void *vector_at(const struct Vector *self, int idx) {
+void *vector_at(struct Vector *self, int idx) {
     if (idx >= self->length) {
         fprintf(stderr, "error: index is out of range");
         vector_destroy(self);
@@ -61,4 +68,18 @@ void vector_pop(struct Vector *self, int idx) {
             exit(1);
         } else self->data = temp;
     }
+}
+
+// -------------------------------
+
+vecitr_t vector_begin(const struct Vector *self) {
+    return (vecitr_t){vector_at(self, 0), self->el_size};
+}
+
+void vecitr_next(vecitr_t *self) {
+    self->current += self->el_size;
+}
+
+int vector_end(struct Vector *self, vecitr_t *iter) {
+    return (iter->current > vector_at(self, self->length - 1));
 }
