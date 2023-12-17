@@ -39,3 +39,28 @@ void dict_append(struct Dict *self, const char *key, const void *value) {
     vector_append(self->keys, key);
     vector_append(self->values, value);
 }
+
+void dict_keyFor(struct Dict *self, const void *value, char *dst_buf) {
+    for (int i = 0; i < self->values->length; i++) {
+        if (!memcmp(value, vector_at(self->values, i), self->values->el_size)) {
+            sprintf(dst_buf, "%s", (char *)vector_at(self->keys, i));
+            return;
+        }
+    }
+    fprintf(stderr, "Error: there are no existing keys for such a value in this dictionary");
+    dict_destroy(self);
+    exit(1);
+}
+
+void dict_pop(struct Dict *self, const char *key) {
+    for (int i = 0; i < self->keys->length; i++) {
+        if (!strcmp((char *)vector_at(self->keys, i), key)) {
+            vector_pop(self->keys, i);
+            vector_pop(self->values, i);
+            return;
+        }
+    }
+    fprintf(stderr, "Error: the key was not found");
+    dict_destroy(self);
+    exit(1);
+}

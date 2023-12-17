@@ -19,5 +19,7 @@ struct Dict *_dict_create(size_t el_size);
 void dict_destroy(struct Dict *self);
 void *dict_at(struct Dict *self, const char *key);
 void dict_append(struct Dict *self, const char *key, const void *value);
+void dict_keyFor(struct Dict *self, const void *value, char *dst_buf);
+void dict_pop(struct Dict *self, const char *key);
 
 #endif
